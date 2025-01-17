@@ -3,17 +3,34 @@ import java.net.*;
 
 public class SimpleWebServer {
     public static void main(String[] args) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        int port = Integer.parseInt(args[0]);
+        System.out.println("YoU SeLeCt PoRt NuMbEr:" + args[0]);
+
         
-        // Taking port and directory from user which want to serve
-        System.out.print("Enter the port number: ");
-        int port = Integer.parseInt(reader.readLine());
-        System.out.print("Enter the directory path to serve files: ");
-        String directoryPath = reader.readLine();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        String directoryPath = null;
+        String directoryPage = null;
+ 
+        // if user want to se path by own then -p tag
+        if (args.length == 2 && args[1].equals("-p")) {
+            System.out.print("Enter the directory path to serve files: ");
+            directoryPath = reader.readLine();
+        }
+        else{
+            try {
+                // Get the absolute path of the current file
+                File currentFile = new File(SimpleWebServer.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+                directoryPath =  currentFile.getParent()+"/test/";
+                directoryPage = currentFile.getParent()+"/page/";
+            } catch (Exception e) {
+                System.err.println("Error retrieving file location: " + e.getMessage());
+            }
+        }
 
         // Checking is directory exists 
         File directory = new File(directoryPath);
         if (!directory.exists() || !directory.isDirectory()) {
+            System.out.println(directoryPath);
             System.out.println("Invalid directory path! Exiting...");
             return;
         }
@@ -62,9 +79,18 @@ public class SimpleWebServer {
                 out.write(httpResponse);
             } else {
                 // Send 404 response
+                File fileToError = new File(directoryPage+"/error404.html");
+
+                StringBuilder fileContent = new StringBuilder();
+                try (BufferedReader fileReader = new BufferedReader(new FileReader(fileToError))) {
+                    String fileLine;
+                    while ((fileLine = fileReader.readLine()) != null) {
+                        fileContent.append(fileLine).append("\n");
+                    }
+                }
                 String httpResponse = "HTTP/1.1 404 Not Found\r\n" +
                                       "Content-Type: text/html\r\n\r\n" +
-                                      "<html><body><h1>404 Not Found</h1></body></html>";
+                                      fileContent.toString();
                 out.write(httpResponse);
             }
             out.flush(); 
