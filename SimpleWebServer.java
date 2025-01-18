@@ -45,7 +45,7 @@ public class SimpleWebServer extends Thread {
         while (true) {
         Socket clientSocket = serverSocket.accept(); // listning on that port
         System.out.println("Client connected");
-        new SimpleWebServer(clientSocket).start();
+        new SimpleWebServer(clientSocket).start();  // start a single thread
 
         }
 
@@ -59,14 +59,27 @@ public class SimpleWebServer extends Thread {
             
             // Read HTTP request
             String line;
+            String requestedParam = null;
             String requestedFile = "/index.html";
             while (!(line = in.readLine()).isEmpty()) {
                 System.out.println(line);
                 if (line.startsWith("GET")) {
                     String[] parts = line.split(" ");
                     if (parts.length > 1) {
-                        requestedFile = parts[1];
+                        if(parts[1].contains("?"))
+                        {
+                            String[] temp = parts[1].split("\\?");
+                            requestedFile = temp[0];
+                            requestedParam = temp[1];
+                            System.out.println("file :"+ requestedFile + "\n parameter:"+requestedParam);
+                        }
+                        else{
+                            requestedFile = parts[1];
+                        }
                     }
+                }
+                else if(line.startsWith("POST")){
+                    System.out.println("PUSH kela tye");
                 }
             }
             
