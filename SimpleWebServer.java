@@ -64,7 +64,7 @@ public class SimpleWebServer extends Thread {
     
             // Parse headers
             while ((line = in.readLine()) != null && !line.isEmpty()) {
-               // System.out.println(line); // Print headers
+               System.out.println(line); // Print headers
                 if (line.startsWith("GET")) {
                     String[] parts = line.split(" ");
                     if (parts.length > 1) {
