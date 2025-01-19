@@ -6,9 +6,10 @@ public class SimpleWebServer extends Thread {
     private static String directoryPath = null;
     private Socket clientSocket;
 
-    SimpleWebServer(Socket clientSocket){
+    SimpleWebServer(Socket clientSocket) {
         this.clientSocket = clientSocket;
     }
+
     public static void main(String[] args) throws IOException {
         int port = Integer.parseInt(args[0]);
         System.out.println("YoU SeLeCt PoRt NuMbEr:" + args[0]);
@@ -43,86 +44,105 @@ public class SimpleWebServer extends Thread {
         System.out.println("Server is listening on port " + port);
 
         while (true) {
-        Socket clientSocket = serverSocket.accept(); // listning on that port
-        System.out.println("Client connected");
-        new SimpleWebServer(clientSocket).start();  // start a single thread
+            Socket clientSocket = serverSocket.accept(); // listning on that port
+            System.out.println("Client connected");
+            new SimpleWebServer(clientSocket).start(); // start a single thread
 
         }
 
     }
-
     public void run() {
         try {
-            
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream());
-            
+    
             // Read HTTP request
             String line;
-            String requestedParam = null;
             String requestedFile = "/index.html";
-            while (!(line = in.readLine()).isEmpty()) {
-                System.out.println(line);
+            String requestedParam = null;
+            int contentLength = 0;
+    
+            // Parse headers
+            while ((line = in.readLine()) != null && !line.isEmpty()) {
+               // System.out.println(line); // Print headers
                 if (line.startsWith("GET")) {
                     String[] parts = line.split(" ");
                     if (parts.length > 1) {
-                        if(parts[1].contains("?"))
-                        {
-                            String[] temp = parts[1].split("\\?");
+                        if (parts[1].contains("?")) {
+                            String[] temp = parts[1].split("\\?", 2); // Split into path and parameters
                             requestedFile = temp[0];
                             requestedParam = temp[1];
-                            System.out.println("file :"+ requestedFile + "\n parameter:"+requestedParam);
-                        }
-                        else{
+                            System.out.println("File: " + requestedFile);
+                            System.out.println("Parameters: " + requestedParam);
+                        } else {
                             requestedFile = parts[1];
                         }
                     }
-                }
-                else if(line.startsWith("POST")){
-                    System.out.println("PUSH kela tye");
+                } else if (line.startsWith("POST")) {
+                    String[] parts = line.split(" ");
+                    if (parts.length > 1) {
+                        requestedFile = parts[1];
+                        System.out.println("File: " + requestedFile);
+                    }
+                } else if (line.startsWith("Content-Length:")) {
+                    contentLength = Integer.parseInt(line.split(":")[1].trim()); // Parse content length
                 }
             }
-            
-            // serving that particular .html file
+    
+            // Read POST body if present
+            String requestBody = null;
+            if (contentLength > 0) {
+                char[] bodyChars = new char[contentLength];
+                in.read(bodyChars, 0, contentLength); // Read the exact number of bytes
+                requestBody = new String(bodyChars);
+                System.out.println("Request Body:\n" + requestBody); // Log the request body (e.g., for JSON)
+            }
+    
+            // Serve the requested file
             File fileToServe = new File(directoryPath + requestedFile);
             if (fileToServe.exists() && fileToServe.isFile()) {
-                // Read file content
                 StringBuilder fileContent = new StringBuilder();
                 try (BufferedReader fileReader = new BufferedReader(new FileReader(fileToServe))) {
-                String fileLine;
-                while ((fileLine = fileReader.readLine()) != null) {
-                    fileContent.append(fileLine).append("\n");
+                    String fileLine;
+                    while ((fileLine = fileReader.readLine()) != null) {
+                        fileContent.append(fileLine).append("\n");
+                    }
                 }
-            }
-            
-            // making response with status code
-            
-            // Send HTTP response
-            String httpResponse = "HTTP/1.1 200 OK\r\n" +
-            "Content-Type: text/html\r\n\r\n" +
-            fileContent.toString();
-            out.write(httpResponse);
-        } else {
-            // Send 404 response
-            File fileToError = new File(directoryPage + "/error404.html");
-            
-            StringBuilder fileContent = new StringBuilder();
-            try (BufferedReader fileReader = new BufferedReader(new FileReader(fileToError))) {
-                String fileLine;
-                while ((fileLine = fileReader.readLine()) != null) {
-                    fileContent.append(fileLine).append("\n");
+    
+                // Determine content type (HTML by default)
+                String contentType = "text/html";
+                if (requestedFile.endsWith(".json")) {
+                    contentType = "application/json";
                 }
+    
+                // Send HTTP response
+                String httpResponse = "HTTP/1.1 200 OK\r\n" +
+                        "Content-Type: " + contentType + "\r\n\r\n" +
+                        fileContent.toString();
+                out.write(httpResponse);
+            } else {
+                // Send 404 response
+                File errorPage = new File(directoryPage + "/error404.html");
+    
+                StringBuilder fileContent = new StringBuilder();
+                try (BufferedReader fileReader = new BufferedReader(new FileReader(errorPage))) {
+                    String fileLine;
+                    while ((fileLine = fileReader.readLine()) != null) {
+                        fileContent.append(fileLine).append("\n");
+                    }
+                }
+    
+                String httpResponse = "HTTP/1.1 404 Not Found\r\n" +
+                        "Content-Type: text/html\r\n\r\n" +
+                        fileContent.toString();
+                out.write(httpResponse);
             }
-            String httpResponse = "HTTP/1.1 404 Not Found\r\n" +
-            "Content-Type: text/html\r\n\r\n" +
-            fileContent.toString();
-            out.write(httpResponse);
+    
+            out.flush();
+            clientSocket.close();
+        } catch (Exception e) {
+            System.out.println("Client Thread error: " + e.getMessage());
         }
-        out.flush();
-        clientSocket.close();
-    } 
-    catch (Exception e) {
-        System.out.println("Client Thread error" + e.getMessage());
     }
-    }
+    
 }
