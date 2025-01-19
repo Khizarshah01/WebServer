@@ -1,6 +1,10 @@
 # Simple Web Server
 
-A simple multi-threaded web server implemented in Java. The server handles both `GET` and `POST` requests, serving HTML pages and accepting JSON data through `POST` requests. It also features custom error handling, dynamic request parsing, and an extensible architecture to serve files from a specified directory.
+This is a simple multi-threaded web server implemented in Java, created as part of my learning journey in networking and backend development. The server handles both `GET` and `POST` requests, serving static HTML pages and accepting JSON data through `POST` requests. It also features custom error handling, dynamic request parsing, and an extensible architecture to serve files from a specified directory.
+
+## Purpose
+
+This project was developed to enhance my understanding of networking concepts, specifically in handling HTTP requests and responses. I focused on implementing a basic web server to practice handling multiple client connections concurrently using threads. Additionally, I explored request parsing, error handling, and serving dynamic content from a specified directory.
 
 ## Features
 
