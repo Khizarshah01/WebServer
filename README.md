@@ -20,7 +20,6 @@ This project was developed to enhance my understanding of networking concepts, s
 ### Prerequisites
 
 - Java 8 or higher
-- Maven (optional for managing dependencies)
 
 ### Installation
 
