@@ -85,17 +85,17 @@ public class SimpleWebServer extends Thread {
                         System.out.println("File: " + requestedFile);
                     }
                 } else if (line.startsWith("Content-Length:")) {
-                    contentLength = Integer.parseInt(line.split(":")[1].trim()); // Parse content length
+                    contentLength = Integer.parseInt(line.split(":")[1].trim()); // store length of body
                 }
             }
     
             // Read POST body if present
             String requestBody = null;
             if (contentLength > 0) {
-                char[] bodyChars = new char[contentLength];
-                in.read(bodyChars, 0, contentLength); // Read the exact number of bytes
-                requestBody = new String(bodyChars);
-                System.out.println("Request Body:\n" + requestBody); // Log the request body (e.g., for JSON)
+                char[] body = new char[contentLength];
+                in.read(body, 0, contentLength); // Read the exact number of bytes
+                requestBody = new String(body);
+                System.out.println("Request Body:\n" + requestBody); // prnit json logs
             }
     
             // Serve the requested file
@@ -109,7 +109,7 @@ public class SimpleWebServer extends Thread {
                     }
                 }
     
-                // Determine content type (HTML by default)
+                // Checking which content type isit
                 String contentType = "text/html";
                 if (requestedFile.endsWith(".json")) {
                     contentType = "application/json";
