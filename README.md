@@ -50,7 +50,7 @@ To start the server:
     java SimpleWebServer 6969
     ```
 
-3. The server will start listening on the specified port (default `6969`).
+3. The server will start listening on the specified port (default `6767`).
 4. You can now test the server by sending `GET` and `POST` requests to it using Postman or any other HTTP client.
 
 ## How It Works
