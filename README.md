@@ -33,7 +33,7 @@ This project was developed to enhance my understanding of networking concepts, s
 3. Run the server with the desired port number. You can also specify a custom directory to serve files from using the `-p` flag.
 
     ```bash
-    java SimpleWebServer 6969 -p /path/to/directory
+    java SimpleWebServer 6767 -p /path/to/directory
     ```
 
     - Replace `6969` with your preferred port number.
@@ -47,7 +47,7 @@ To start the server:
 2. Run the `SimpleWebServer` with the desired port and optional directory:
 
     ```bash
-    java SimpleWebServer 6969
+    java SimpleWebServer 6767
     ```
 
 3. The server will start listening on the specified port (default `6767`).
@@ -68,7 +68,7 @@ The server processes incoming HTTP requests:
 
     ```
     GET /index.html HTTP/1.1
-    Host: localhost:6969
+    Host: localhost:6767
     ```
 
     - Server responds with the contents of `index.html`.
@@ -77,7 +77,7 @@ The server processes incoming HTTP requests:
 
     ```
     POST /index.html HTTP/1.1
-    Host: localhost:6969
+    Host: localhost:6767
     Content-Type: application/json
     Content-Length: 37
 
