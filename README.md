@@ -91,23 +91,17 @@ The server processes incoming HTTP requests:
   
 ### Benchmark using ApacheBench
 
-```
-Concurrent Clients: Successfully handled 500 simultaneous connections.
-Average Response Time: 19.57ms per request.
-Peak Throughput: 10,218 requests/sec.
-Memory Usage: ~25MB at peak load.
-Zero Failed Requests in benchmark tests.
-```
+- **Concurrent Clients:** Successfully handled 500 simultaneous connections.
+- **Average Response Time:** 19.57ms per request.
+- **Peak Throughput:** 10,218 requests/sec.
+- **Memory Usage:** ~25MB at peak load.
+- **Zero Failed Requests** in benchmark tests.
+
 
 ### Custom Error Handling
 
 If a requested file is not found, the server returns a `404 Not Found` page. You can customize the error page by modifying the `error404.html` file.
 
-## Metrics and Performance
-
-- **Server Capacity**: Can handle up to 100 concurrent client connections.
-- **Average Response Time**: 50ms per request.
-- **Error Handling**: Custom 404 error page is served for missing files.
 
 ## Code Structure
 
