@@ -17,6 +17,23 @@ public class FileService {
                 fileContent.toString();
     }
 
+    public static boolean writeFile(File file, String content) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            writer.write(content);
+            return true;  // File successfully written
+        } catch (IOException e) {
+            System.out.println("Error writing file: " + e.getMessage());
+            return false; // File write failed
+        }
+    }
+
+    public static boolean deleteFile(File file) {
+        if (file.exists()) {
+            return file.delete();
+        }
+        return false;
+    }
+
     public static String determineContentType(String fileName) {
         if (fileName.endsWith(".json")) {
             return "application/json";
