@@ -108,13 +108,12 @@ If a requested file is not found, the server returns a `404 Not Found` page. You
 - **`SimpleWebServer.java`**: Main server logic that handles incoming requests, processes `GET` and `POST` requests, and serves static files.
 - **`/test/`**: Default directory to serve files from.
 - **`/page/`**: Contains the custom `404 Not Found` error page.
-  
-## Future Improvements
 
-- Add support for more HTTP methods (e.g., `PUT`, `DELETE`).
-- Implement more advanced routing and API handling.
-- Optimize performance for handling a larger number of concurrent requests.
-- Add more robust error handling and logging.
+## Flow of Project
+![WebServer(2)](https://github.com/user-attachments/assets/1a0deac7-6942-44e8-bae3-f81aaa2368c4)
+
+
+
 
 ## License
 
