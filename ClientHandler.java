@@ -1,7 +1,7 @@
 import java.io.*;
 import java.net.*;
 
-public class ClientHandler extends Thread {
+public class ClientHandler implements Runnable {
     private Socket clientSocket;
     private String directoryPath;
     private String directoryPage;

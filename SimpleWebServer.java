@@ -1,9 +1,12 @@
 import java.io.*;
 import java.net.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SimpleWebServer {
     private static String directoryPath = null;
     private static String directoryPage = null;
+    private static final int coreCount = Runtime.getRuntime().availableProcessors();
 
     public static void main(String[] args) throws IOException {
         int port = Integer.parseInt(args[0]);
@@ -31,13 +34,21 @@ public class SimpleWebServer {
             return;
         }
 
-        ServerSocket serverSocket = new ServerSocket(port);
-        System.out.println("Server is listening on port " + port);
+        ExecutorService threadPool = Executors.newFixedThreadPool(2 * coreCount);
+        try(ServerSocket serverSocket = new ServerSocket(port)){
 
-        while (true) {
-            Socket clientSocket = serverSocket.accept();
-            System.out.println("Client connected");
-            new ClientHandler(clientSocket, directoryPath, directoryPage).start();
+            System.out.println("Server is listening on port " + port);
+            
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("Client connected");
+                threadPool.execute(new ClientHandler(clientSocket, directoryPath, directoryPage));
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }finally{
+            threadPool.shutdown();
         }
     }
 }
